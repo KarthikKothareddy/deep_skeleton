@@ -70,25 +70,26 @@ class RescalePreprocessor(object):
     This class scales image to the given width and height, also
     one can choose to keep the aspect ratio intact after resizing
     """
-    def __init__(self, height, width):
+    def __init__(self, height, width, **kwargs):
         self.height = height
         self.width = width
+        # if interpolation is specified then use it or else use INTER_AREA
+        self.interpolation = kwargs.get("interpolation", cv2.INTER_AREA)
+        # aspect_aware is turned off by default
+        self.aspect_aware = kwargs.get("aspect_aware", False)
 
-    def _preprocess(self, image, **kwargs):
+    def _preprocess(self, image):
         """
         Resizes the given image according to new dimensions, one can
         choose to keep or ignore aspect ratio of original image by
-        passing the aspect_aware flag
+        passing the aspect_aware flag in constructor
 
         :param image: The input image
         :param kwargs:
         :return: resized image according to new dimensions
         """
-        # if interpolation is specified then use it or else use INTER_AREA
-        interpolation = kwargs["interpolation"] if kwargs["interpolation"] \
-            else cv2.INTER_AREA
         # if specified to preserve aspect ratio
-        if kwargs["aspect_aware"]:
+        if self.aspect_aware:
             h, w = image.shape[:2]
             dW = 0
             dH = 0
@@ -97,7 +98,7 @@ class RescalePreprocessor(object):
                 image = imutils.resize(
                     image,
                     width=self.width,
-                    inter=interpolation
+                    inter=self.interpolation
                 )
                 dH = int((image.shape[0] - self.height) / 2.0)
             # if height is smaller than width
@@ -105,7 +106,7 @@ class RescalePreprocessor(object):
                 image = imutils.resize(
                     image,
                     height=self.height,
-                    inter=interpolation
+                    inter=self.interpolation
                 )
                 dW = int((image.shape[1] - self.width) / 2.0)
             h, w = image.shape[:2]
@@ -114,18 +115,42 @@ class RescalePreprocessor(object):
         return cv2.resize(
             image,
             (self.width, self.height),
-            interpolation=interpolation
+            interpolation=self.interpolation
         )
 
 
-def _bgr_to_rgb(self, images):
-    return [cv2.cvtColor(image, cv2.COLOR_BGR2RGB) for image in images]
+class ColorSpacePreprocessor(object):
+    """
+    This class contains utilities to convert image from one color
+    space to another assuming the source is in BGR space (cv2 default)
+    """
+    def __init__(self, color_space):
+        self.color_space = color_space
 
-def _rgb_to_gray(self, images):
-    return [cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) for image in images]
+    def _preprocess(self, image):
+        """
+        Changes the color space of the image to a specified space
+        :param image: The input image
+        :return: Modified image with new color space
+        """
+        # BGR to RGB
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-def _rgb_to_hsv(self, images):
-    return [cv2.cvtColor(image, cv2.COLOR_RGB2HSV) for image in images]
+        # targets
+        # RGB to GRAY
+        if self.color_space.lower() == "grayscale":
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        # RGB to HSV
+        elif self.color_space.lower() == "hsv":
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        # RGB to LAB
+        elif self.color_space.lower() == "lab":
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+
+        return image
+
+
+
 
 
 
