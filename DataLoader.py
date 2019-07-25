@@ -4,7 +4,6 @@ import numpy as np
 import cv2
 from sklearn.preprocessing import LabelEncoder
 from keras.preprocessing.image import img_to_array
-from imutils import paths
 import imutils
 
 
@@ -151,7 +150,7 @@ class Rescale(object):
 
 class GaussianBlur(object):
 
-    def __index__(self, kernel, sigmaX, **kwargs):
+    def __init__(self, kernel, sigmaX):
         self.kernel = kernel
         self.sigmaX = sigmaX
 
@@ -163,5 +162,12 @@ class GaussianBlur(object):
         return image
 
 
+class HistogramEqualize(object):
+
+    def __init__(self, **kwargs):
+        self.channel_wise = kwargs.get("chennel_wise", False)
+
+    def _preprocess(self, image):
+        return cv2.equalizeHist(image)
 
 
