@@ -65,7 +65,38 @@ class BasePreprocessor(object):
         return img_to_array(image, data_format=self.data_format)
 
 
-class RescalePreprocessor(object):
+class ChangeColorSpace(object):
+    """
+    This class contains utilities to convert image from one color
+    space to another assuming the source is in BGR space (cv2 default)
+    """
+    def __init__(self, color_space):
+        self.color_space = color_space
+
+    def _preprocess(self, image):
+        """
+        Changes the color space of the image to a specified space
+        :param image: The input image
+        :return: Modified image with new color space
+        """
+        # BGR to RGB
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # targets
+        # RGB to GRAY
+        if self.color_space.lower() == "grayscale":
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        # RGB to HSV
+        elif self.color_space.lower() == "hsv":
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        # RGB to LAB
+        elif self.color_space.lower() == "lab":
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+
+        return image
+
+
+class Rescale(object):
     """
     This class scales image to the given width and height, also
     one can choose to keep the aspect ratio intact after resizing
@@ -85,7 +116,6 @@ class RescalePreprocessor(object):
         passing the aspect_aware flag in constructor
 
         :param image: The input image
-        :param kwargs:
         :return: resized image according to new dimensions
         """
         # if specified to preserve aspect ratio
@@ -119,40 +149,18 @@ class RescalePreprocessor(object):
         )
 
 
-class ColorSpacePreprocessor(object):
-    """
-    This class contains utilities to convert image from one color
-    space to another assuming the source is in BGR space (cv2 default)
-    """
-    def __init__(self, color_space):
-        self.color_space = color_space
+class GaussianBlur(object):
+
+    def __index__(self, kernel, sigmaX, **kwargs):
+        self.kernel = kernel
+        self.sigmaX = sigmaX
 
     def _preprocess(self, image):
-        """
-        Changes the color space of the image to a specified space
-        :param image: The input image
-        :return: Modified image with new color space
-        """
-        # BGR to RGB
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        # targets
-        # RGB to GRAY
-        if self.color_space.lower() == "grayscale":
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        # RGB to HSV
-        elif self.color_space.lower() == "hsv":
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-        # RGB to LAB
-        elif self.color_space.lower() == "lab":
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
-
+        image = cv2.GaussianBlur(
+            image, ksize=self.kernel, sigmaX=self.sigmaX
+        )
         return image
-
-
-
-
-
 
 
 
