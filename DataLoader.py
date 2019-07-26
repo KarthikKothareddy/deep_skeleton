@@ -40,6 +40,7 @@ class DataSetLoader(object):
             _y = path.split(os.path.sep)[-2]
             # if any preprocessors
             if self.preprocessors:
+                print("INFO: Pre-processing inputs...")
                 for p in self.preprocessors:
                     _X = p._preprocess(_X)
             X.append(_X)
@@ -103,7 +104,9 @@ class ChangeColorSpace(object):
             # source to target
             return cv2.cvtColor(image, self.cmaps[self.source][self.target])
         except KeyError:
-            print("ERROR: The specified color space conversion does not exist")
+            print(
+                "ERROR: The specified color space conversion does not exist..."
+            )
             return None
 
 
