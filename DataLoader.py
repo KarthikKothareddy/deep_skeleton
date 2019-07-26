@@ -67,10 +67,31 @@ class BasePreprocessor(object):
 class ChangeColorSpace(object):
     """
     This class contains utilities to convert image from one color
-    space to another assuming the source is in BGR space (cv2 default)
+    space to another assuming the source to target conversion is
+    valid in cv2
     """
-    def __init__(self, color_space):
-        self.color_space = color_space
+    cmaps = {
+        "BGR": {
+            "RGB": cv2.COLOR_BGR2RGB,
+            "GRAY": cv2.COLOR_BGR2GRAY,
+            "HSV": cv2.COLOR_BGR2HSV,
+            "LAB": cv2.COLOR_BGR2LAB
+        },
+        "RGB": {
+            "BGR": cv2.COLOR_RGB2BGR,
+            "GRAY": cv2.COLOR_RGB2GRAY,
+            "HSV": cv2.COLOR_RGB2HSV,
+            "LAB": cv2.COLOR_RGB2LAB
+        },
+        "HSV": {
+            "BGR": cv2.COLOR_HSV2BGR,
+            "RGB": cv2.COLOR_HSV2RGB
+        }
+    }
+
+    def __init__(self, source, target):
+        self.source = str(source).upper()
+        self.target = str(target).upper()
 
     def _preprocess(self, image):
         """
@@ -78,21 +99,12 @@ class ChangeColorSpace(object):
         :param image: The input image
         :return: Modified image with new color space
         """
-        # BGR to RGB
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        # targets
-        # RGB to GRAY
-        if self.color_space.lower() == "grayscale":
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        # RGB to HSV
-        elif self.color_space.lower() == "hsv":
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-        # RGB to LAB
-        elif self.color_space.lower() == "lab":
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
-
-        return image
+        try:
+            # source to target
+            return cv2.cvtColor(image, self.cmaps[self.source][self.target])
+        except KeyError:
+            print("ERROR: The specified color space conversion does not exist")
+            return None
 
 
 class Rescale(object):
@@ -165,7 +177,7 @@ class GaussianBlur(object):
 class HistogramEqualize(object):
 
     def __init__(self, **kwargs):
-        self.channel_wise = kwargs.get("chennel_wise", False)
+        self.channel_wise = kwargs.get("channel_wise", False)
 
     def _preprocess(self, image):
         return cv2.equalizeHist(image)
