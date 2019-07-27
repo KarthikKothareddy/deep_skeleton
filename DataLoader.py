@@ -26,7 +26,7 @@ class DataSetLoader(object):
         """
         Returns the data in the form of (images, labels) by parsing
         an input directory
-        :param kwargs:
+        :param kwargs: extend_path and encode_labels are optional
         :return: Two numpy arrays containing images and target labels
         """
         # input and target labels
