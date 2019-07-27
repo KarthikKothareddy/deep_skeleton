@@ -1,9 +1,11 @@
 
-from keras.models import Sequential
+from keras import backend as K
+from keras.models import Sequential, Model
+from keras.layers import GlobalAveragePooling2D, GlobalMaxPooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers.core import Activation, Flatten, Dropout, Dense
-from keras import backend as K
+from keras.applications import ResNet50 as resnet
 
 
 class CustomNet(object):
@@ -18,7 +20,7 @@ class CustomNet(object):
     def model(self):
         # initiate model
         _model = Sequential()
-        inputShape = (self.height, self.width, self.channels)
+        input_shape = (self.height, self.width, self.channels)
         axis = -1
         # if using theano
         if K.image_data_format() == "channels_first":
@@ -29,7 +31,7 @@ class CustomNet(object):
         _model.add(Conv2D(
             self.scale, (3, 3),
             padding="same",
-            input_shape=inputShape)
+            input_shape=input_shape)
         )
         _model.add(Activation("relu"))
         _model.add(BatchNormalization(axis=axis))
@@ -67,6 +69,31 @@ class CustomNet(object):
         return _model
 
 
+class ResNet50(object):
+
+    def __init__(self, height, width, channels, classes, parameter_scaling):
+        self.height = height
+        self.width = width
+        self.channels = channels
+        self.output_classes = classes
+        self.scale = parameter_scaling
+
+
+    def model(self):
+
+        _model = resnet(
+            weights=None,
+            include_top=False,
+            input_shape=(self.height, self.width, self.channels),
+            pooling="max"
+        )
+        x = _model.output
+        x = Flatten(input_shape=_model.output_shape[1:])(x)
+        x = Dense(512, activation="relu")(x)
+        x = Dropout(0.25)(x)
+        x = Dense(self.output_classes, activation="softmax")(x)
+        model = Model(inputs=_model.input, outputs=x)
+        return model
 
 
 
