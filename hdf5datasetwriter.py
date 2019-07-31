@@ -59,7 +59,7 @@ class HDF5DatasetWriter:
 		self.idx = i
 		self.buffer = {"data": [], "labels": []}
 
-	def storeClassLabels(self, classLabels):
+	def store_class_labels(self, classLabels):
 		"""
 		create a dataset to store the actual class label names,
 		then store the class labels `vlen=unicode` for Py2.7
