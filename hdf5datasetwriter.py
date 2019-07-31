@@ -5,8 +5,7 @@ import os
 
 class HDF5DatasetWriter:
 
-	def __init__(self, dims, outputPath, dataKey="images",
-		bufSize=1000):
+	def __init__(self, dims, outputPath, dataKey="images", bufSize=1000):
 		# check to see if the output path exists, and if so, raise
 		# an exception
 		if os.path.exists(outputPath):
@@ -36,7 +35,12 @@ class HDF5DatasetWriter:
 		self.idx = 0
 
 	def add(self, rows, labels):
-		# add the rows and labels to the buffer
+		"""
+		Adds the rows and labels to the buffer
+		:param rows:
+		:param labels:
+		:return:
+		"""
 		self.buffer["data"].extend(rows)
 		self.buffer["labels"].extend(labels)
 
@@ -45,7 +49,10 @@ class HDF5DatasetWriter:
 			self.flush()
 
 	def flush(self):
-		# write the buffers to disk then reset the buffer
+		"""
+		Write the buffers to disk then reset the buffer
+		:return:
+		"""
 		i = self.idx + len(self.buffer["data"])
 		self.data[self.idx:i] = self.buffer["data"]
 		self.labels[self.idx:i] = self.buffer["labels"]
@@ -53,15 +60,22 @@ class HDF5DatasetWriter:
 		self.buffer = {"data": [], "labels": []}
 
 	def storeClassLabels(self, classLabels):
-		# create a dataset to store the actual class label names,
-		# then store the class labels
-		# `vlen=unicode` for Py2.7
+		"""
+		create a dataset to store the actual class label names,
+		then store the class labels `vlen=unicode` for Py2.7
+		:param classLabels:
+		:return:
+		"""
 		dt = h5py.special_dtype(vlen=str)
 		labelSet = self.db.create_dataset("label_names",
 			(len(classLabels),), dtype=dt)
 		labelSet[:] = classLabels
 
 	def close(self):
+		"""
+		Closes the dataset
+		:return:
+		"""
 		# check to see if there are any other entries in the buffer
 		# that need to be flushed to disk
 		if len(self.buffer["data"]) > 0:
