@@ -78,9 +78,7 @@ class ResNet50(object):
         self.output_classes = classes
         self.scale = parameter_scaling
 
-
     def model(self):
-
         _model = resnet(
             weights=None,
             include_top=False,
