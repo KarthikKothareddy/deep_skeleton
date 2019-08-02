@@ -129,7 +129,7 @@ class Rescale(object):
         # aspect_aware is turned off by default
         self.aspect_aware = kwargs.get("aspect_aware", False)
 
-    def _preprocess(self, image):
+    def _change_scale(self, image):
         """
         Resizes the given image according to new dimensions, one can
         choose to keep or ignore aspect ratio of original image by
@@ -167,6 +167,9 @@ class Rescale(object):
             (self.width, self.height),
             interpolation=self.interpolation
         )
+
+    def run(self, image):
+        return self._change_scale(image)
 
 
 class GaussianBlur(object):
