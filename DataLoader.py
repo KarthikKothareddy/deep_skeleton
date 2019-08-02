@@ -199,6 +199,7 @@ class HistogramEqualize(object):
     """
     def __init__(self, **kwargs):
         self.channel_wise = kwargs.get("channel_wise", False)
+        # TODO : perform a channel wise histogram equalization
 
     def _histogram_equalize(self, image):
         return cv2.equalizeHist(image)
