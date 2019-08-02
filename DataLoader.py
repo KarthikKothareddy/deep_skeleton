@@ -42,7 +42,7 @@ class DataSetLoader(object):
             if self.preprocessors:
                 print("INFO: Pre-processing inputs...")
                 for p in self.preprocessors:
-                    _X = p._preprocess(_X)
+                    _X = p.run(_X)
             X.append(_X)
             y.append(_y)
         y = np.array(y)
