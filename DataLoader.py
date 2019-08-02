@@ -178,12 +178,15 @@ class GaussianBlur(object):
         self.kernel = kernel
         self.sigmaX = sigmaX
 
-    def _preprocess(self, image):
+    def _apply_blur(self, image):
 
         image = cv2.GaussianBlur(
             image, ksize=self.kernel, sigmaX=self.sigmaX
         )
         return image
+
+    def run(self, image):
+        return self._apply_blur(image)
 
 
 class HistogramEqualize(object):
