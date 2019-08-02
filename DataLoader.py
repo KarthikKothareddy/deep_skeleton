@@ -173,7 +173,10 @@ class Rescale(object):
 
 
 class GaussianBlur(object):
-
+    """
+    Applies Gaussian blur to an input image and returns the resulting
+    image. One can choose the kernel size and sigmaX for the filter
+    """
     def __init__(self, kernel, sigmaX):
         self.kernel = kernel
         self.sigmaX = sigmaX
