@@ -193,7 +193,10 @@ class GaussianBlur(object):
 
 
 class HistogramEqualize(object):
-
+    """
+    Applies Histogram equalization to an input image and returns
+    the resulting image.
+    """
     def __init__(self, **kwargs):
         self.channel_wise = kwargs.get("channel_wise", False)
 
