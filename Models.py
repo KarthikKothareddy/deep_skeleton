@@ -78,9 +78,9 @@ class ResNet50(object):
         self.output_classes = classes
         self.scale = parameter_scaling
 
-    def model(self):
+    def model(self, weights=None):
         _model = resnet(
-            weights=None,
+            weights=weights,
             include_top=False,
             input_shape=(self.height, self.width, self.channels),
             pooling="max"

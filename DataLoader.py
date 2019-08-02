@@ -61,8 +61,11 @@ class BasePreprocessor(object):
     def __init__(self, data_format="channels_last"):
         self.data_format = data_format
 
-    def _preprocess(self, image):
+    def _image_to_array(self, image):
         return img_to_array(image, data_format=self.data_format)
+
+    def run(self, image):
+        return self._image_to_array(image)
 
 
 class ChangeColorSpace(object):
@@ -94,7 +97,7 @@ class ChangeColorSpace(object):
         self.source = str(source).upper()
         self.target = str(target).upper()
 
-    def _preprocess(self, image):
+    def _convert_space(self, image):
         """
         Changes the color space of the image to a specified space
         :param image: The input image
@@ -108,6 +111,9 @@ class ChangeColorSpace(object):
                 "ERROR: The specified color space conversion does not exist..."
             )
             return None
+
+    def run(self, image):
+        return self._convert_space(image)
 
 
 class Rescale(object):
