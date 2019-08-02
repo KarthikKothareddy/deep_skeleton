@@ -194,7 +194,10 @@ class HistogramEqualize(object):
     def __init__(self, **kwargs):
         self.channel_wise = kwargs.get("channel_wise", False)
 
-    def _preprocess(self, image):
+    def _histogram_equalize(self, image):
         return cv2.equalizeHist(image)
+
+    def run(self, image):
+        return self._histogram_equalize(image)
 
 
