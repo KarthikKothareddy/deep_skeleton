@@ -79,6 +79,18 @@ class ResNet50(object):
         self.scale = parameter_scaling
 
     def model(self, weights=None):
+        """
+        Constructs and reurns Resnet50 CNN for given dimensions
+        Parameters
+        ----------
+        weights: string
+            Weights to be specified
+
+        Returns
+        -------
+            Resnet50 model with predefined weights
+
+        """
         _model = resnet(
             weights=weights,
             include_top=False,
