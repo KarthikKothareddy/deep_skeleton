@@ -37,9 +37,15 @@ class HDF5DatasetWriter:
 	def add(self, rows, labels):
 		"""
 		Adds the rows and labels to the buffer
-		:param rows:
-		:param labels:
-		:return:
+
+		Parameters
+		----------
+		rows
+		labels
+
+		Returns
+		-------
+
 		"""
 		self.buffer["data"].extend(rows)
 		self.buffer["labels"].extend(labels)
