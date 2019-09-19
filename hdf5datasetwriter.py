@@ -57,7 +57,10 @@ class HDF5DatasetWriter:
 	def flush(self):
 		"""
 		Write the buffers to disk then reset the buffer
-		:return:
+
+		Returns
+		-------
+
 		"""
 		i = self.idx + len(self.buffer["data"])
 		self.data[self.idx:i] = self.buffer["data"]
